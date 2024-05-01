@@ -1,0 +1,7 @@
+Flask
+osmnx
+networkx
+pandas
+shapely
+geohash2
+gunicorn
