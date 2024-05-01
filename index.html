@@ -10,6 +10,14 @@
 </head>
 <body>
     <div id="map"></div>
+    <div>
+        <input type="radio" id="distance" name="routeType" value="distance" checked>
+        <label for="distance">Distance</label>
+        <input type="radio" id="pm" name="routeType" value="PM">
+        <label for="pm">PM</label>
+        <input type="radio" id="no2" name="routeType" value="NO2">
+        <label for="no2">NO2</label>
+    </div>
     <script>
         var map = L.map('map').setView([YourDefaultLatitude, YourDefaultLongitude], 13); // Set your default location
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -35,7 +43,8 @@
         });
 
         function fetchRoute() {
-            var url = `/route?lat_start=${startMarker.getLatLng().lat}&lon_start=${startMarker.getLatLng().lng}&lat_end=${endMarker.getLatLng().lat}&lon_end=${endMarker.getLatLng().lng}`;
+            var routeType = document.querySelector('input[name="routeType"]:checked').value;
+            var url = `/route?lat_start=${startMarker.getLatLng().lat}&lon_start=${startMarker.getLatLng().lng}&lat_end=${endMarker.getLatLng().lat}&lon_end=${endMarker.getLatLng().lng}&type=${routeType}`;
             fetch(url)
             .then(response => response.json())
             .then(data => {
