@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Route Finder</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map { height: 80vh; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([YourDefaultLatitude, YourDefaultLongitude], 13); // Set your default location
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }).addTo(map);
+
+        var routeLayer;
+        var startMarker, endMarker;
+
+        map.on('click', function(e) {
+            if (!startMarker) {
+                startMarker = L.marker(e.latlng).addTo(map);
+            } else if (!endMarker) {
+                endMarker = L.marker(e.latlng).addTo(map);
+                fetchRoute();
+            } else {
+                map.removeLayer(startMarker);
+                map.removeLayer(endMarker);
+                map.removeLayer(routeLayer);
+                startMarker = L.marker(e.latlng).addTo(map);
+                endMarker = null;
+            }
+        });
+
+        function fetchRoute() {
+            var url = `/route?lat_start=${startMarker.getLatLng().lat}&lon_start=${startMarker.getLatLng().lng}&lat_end=${endMarker.getLatLng().lat}&lon_end=${endMarker.getLatLng().lng}`;
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                routeLayer = L.polyline(data, {color: 'red'}).addTo(map);
+                map.fitBounds(routeLayer.getBounds());
+            })
+            .catch(error => console.error('Error fetching the route:', error));
+        }
+    </script>
+</body>
+</html>
